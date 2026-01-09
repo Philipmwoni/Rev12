@@ -27,3 +27,7 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
+
+
+class Userprofile(models.Model):
+    profile=models.OneToOneField(User,on_delete=models.CASCADE)    
