@@ -9,9 +9,9 @@ from django.core.exceptions import ValidationError
 
 # Create your models here.
 class User(AbstractUser):
-    username = models.CharField(max_length=100, unique=True, blank=False, null=False)
+    user_name = models.CharField(max_length=100, unique=True, blank=False, null=False)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=100, unique=True,blank= False, null=False)
+    password = models.CharField(max_length=100,blank= False, null=False)
     def clean(self):
         if not self.password:
             raise ValidationError("Password cannot be empty.")
