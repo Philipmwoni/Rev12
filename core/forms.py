@@ -6,3 +6,9 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = models.User
         fields = ['username', 'email', 'password']
+
+
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = models.Expense
+        fields = ['title', 'amount','category']

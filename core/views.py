@@ -36,3 +36,6 @@ def login_view(request):
             messages.error(request, "Invalid username or password")
 
     return render(request, "login.html")
+
+#CRUD FUNCTIONALITY FOR THE EXPENSES
+#API ENDPOINTS FOR THE MODELS(class based views)
