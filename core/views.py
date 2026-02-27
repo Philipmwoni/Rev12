@@ -2,10 +2,23 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
+from .forms import UserForm
 
 # Create your views here.
 def home(request):
     return render(request, "homepage.html")
+
+def register_view(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect("home")
+    else:
+        form = UserForm()
+
+    return render(request, "register.html", {"form": form})
 
 
 #the user already created the account!!!
