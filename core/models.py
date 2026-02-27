@@ -9,8 +9,8 @@ from django.db import models
 
 class Expense(models.Model):
     title = models.CharField(max_length=100)
-    amount = models.FloatField()
-    date = models.DateField()
+    amount = models.FloatField(max_length=False)
+    date = models.DateField( auto_now_add=True) 
 
     def __str__(self):
         return f"{self.title} - {self.amount} on {self.date}"
@@ -25,8 +25,7 @@ class User(models.Model):
     password = models.CharField(max_length=100, unique=True)
     joined_date = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return self.username
+
 
 
 class Userprofile(models.Model):
