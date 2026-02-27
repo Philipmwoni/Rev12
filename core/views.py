@@ -3,10 +3,21 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
 from .forms import UserForm
+from .models import Expense, User
+from .serializers import UserSerializer, ExpenseSerializer
+from rest_framework import generics
 
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+
+
 def home(request):
     return render(request, "homepage.html")
+
+@login_required
+def dashboard(request):
+    expenses = Expense.objects.filter(user=request.user)
+    return render(request, "dashboard.html", {"expenses": expenses})
+
 
 def register_view(request):
     if request.method == "POST":
@@ -39,3 +50,13 @@ def login_view(request):
 
 #CRUD FUNCTIONALITY FOR THE EXPENSES
 #API ENDPOINTS FOR THE MODELS(class based views)
+
+
+
+class UserList(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer   
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
