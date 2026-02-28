@@ -39,7 +39,7 @@ class Expense(models.Model):
         ('bill', 'bill'),
         
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='expenses')
     title = models.CharField(max_length=100, blank=False, null=False)
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, default='other')
     amount = models.FloatField(max_length=False,blank=False, null=False)
@@ -55,5 +55,5 @@ class Expense(models.Model):
 
 
 class Userprofile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE ,related_name='+')
+    profile = models.OneToOneField(User, on_delete=models.CASCADE, related_name='+')
