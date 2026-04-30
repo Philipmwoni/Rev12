@@ -19,5 +19,30 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('expenses/', include('expenses.urls')),
     path('', include('core.urls')),
 ]
+
+"""from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    # Django admin panel
+    path('admin/', admin.site.urls),
+
+    # Accounts app: registration, login, logout, profile, password reset
+    path('core/', include('core.urls', namespace='core')),
+
+    # Expenses app: CRUD, categories, filtering
+    path('expenses/', include('expenses.urls', namespace='expenses')),
+
+    # Dashboard app: home, analytics, charts
+    path('', include('dashboard.urls', namespace='dashboard')),
+]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+"""
