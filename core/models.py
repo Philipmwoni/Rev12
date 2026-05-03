@@ -1,59 +1,63 @@
-"""Django models for the rev core app."""
 
 
 
+import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from django.utils import timezone
+from django.conf import settings
 
 
-# Create your models here.
-class User(AbstractUser):
-    user_name = models.CharField(max_length=100, unique=True, blank=False, null=False)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=100,blank= False, null=False)
-    def clean(self):
-        if not self.password:
-            raise ValidationError("Password cannot be empty.")
-        if len(self.password) < 8:
-            raise ValidationError("Password must be at least 8 characters long.")
-
-
-
+class UserProfile(models.Model):
     
 
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,   # Delete profile when user is deleted
+        related_name='profile'
+    )
 
+    
+    is_email_verified = models.BooleanField(
+        default=False,
+        help_text='True once the user clicks the verification link in their email.'
+    )
 
-class Expense(models.Model):
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        null=True,
+        blank=True
+    )
 
-    CATEGORY_CHOICES = [
-        ('Food', 'Food'),
-        ('Transport', 'Transport'),
-        ('Entertainment', 'Entertainment'),
-        ('Utilities', 'Utilities'),
-        ('Education', 'Education'),
-        ('Health', 'Health'),
-        ('Shopping', 'Shopping'),
-        ('Travel', 'Travel'),
-        ('Personal Care', 'Personal Care'),
-        ('bill', 'bill'),
-        
-    ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='expenses')
-    title = models.CharField(max_length=100, blank=False, null=False)
-    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, default='other')
-    amount = models.FloatField(max_length=False,blank=False, null=False)
-    date = models.DateField( auto_now_add=True) 
+    bio = models.TextField(blank=True, max_length=300)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title} - {self.amount} on {self.date}"
+        return f'Profile of {self.user.username}'
+
+
+class EmailVerificationToken(models.Model):
     
 
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='email_verification_token'
+    )
 
+    
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def is_expired(self):
+       
+        timeout = getattr(settings, 'EMAIL_VERIFICATION_TIMEOUT', 86400)
+        return (timezone.now() - self.created_at).total_seconds() > timeout
 
+    def __str__(self):
+        return f'Verification token for {self.user.email}'
 
-
-class Userprofile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE ,related_name='+')
-    profile = models.OneToOneField(User, on_delete=models.CASCADE, related_name='+')
+# Keep a backwards-compatible alias matching existing migrations
+# which used the name 'Userprofile' (lowercase 'p').
+Userprofile = UserProfile
