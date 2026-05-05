@@ -22,12 +22,12 @@ from .forms import (
 )
 from django.urls import reverse
 def home(request):
-    return redirect('Auth:home')
+    return redirect('auth:home')
 
 def register(request):
    
     if request.user.is_authenticated:
-        return redirect('Auth:home')
+        return redirect('auth:home')
 
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -113,7 +113,7 @@ def verify_email(request, token):
 def login_view(request):
     
     if request.user.is_authenticated:
-        return redirect('Auth:home')
+        return redirect('auth:home')
 
     if request.method == 'POST':
         form = EmailLoginForm(request.POST)
@@ -121,6 +121,7 @@ def login_view(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
+            # Look up the username from email
             try:
                 user_obj = User.objects.get(email__iexact=email)
             except User.DoesNotExist:
@@ -144,7 +145,7 @@ def login_view(request):
 
             login(request, user)
             
-            next_url = request.GET.get('next', 'Auth:home')
+            next_url = request.GET.get('next', 'auth:home')
             return redirect(next_url)
     else:
         form = EmailLoginForm()

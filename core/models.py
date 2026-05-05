@@ -1,18 +1,17 @@
 
 
-
 import uuid
 from django.db import models
-from django.contrib.auth.models import User
-from django.utils import timezone
 from django.conf import settings
+from django.utils import timezone
+from django.contrib.auth import User,
 
 
 class UserProfile(models.Model):
     
 
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,   # Delete profile when user is deleted
         related_name='profile'
     )
@@ -41,7 +40,7 @@ class EmailVerificationToken(models.Model):
     
 
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='email_verification_token'
     )

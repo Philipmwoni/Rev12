@@ -38,12 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
-    'Auth.apps.AuthConfig',
+    'auth.apps.AuthConfig',
     'expenses.apps.ExpensesConfig',
     'rest_framework',
 ]
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'custom_auth.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -132,3 +132,13 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_URL = 'core:login'
+LOGIN_REDIRECT_URL = 'Auth:home'
+LOGOUT_REDIRECT_URL = 'core:login'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_VERIFICATION_TIMEOUT = 86400  # 24 hours in seconds
+DEFAULT_FROM_EMAIL = 'noreply@expense.com'
+EMAIL_SUBJECT_PREFIX = '[Expense Tracker] '
+PASSWORD_RESET_TIMEOUT = 3600  # 1 hour in seconds

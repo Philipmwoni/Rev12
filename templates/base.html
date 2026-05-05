@@ -1,0 +1,271 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Expense Tracker{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --clr-bg: #272c39;
+      --clr-surface: #2f3443;
+      --clr-surface-2: #3a4052;
+
+      --clr-border: rgba(255,255,255,0.08);
+      --clr-border-hover: rgba(255,255,255,0.18);
+
+      --clr-accent: #7269e3;
+      --clr-accent-light: #8a82ff;
+      --clr-accent-dim: rgba(114,105,227,0.15);
+
+      --clr-secondary: #9b7aa3;
+      --clr-secondary-dim: rgba(155,122,163,0.15);
+
+      --clr-green: #8fd6a0;
+      --clr-green-dim: rgba(143,214,160,0.15);
+
+      --clr-red: #ef4444;
+      --clr-red-dim: rgba(239,68,68,0.12);
+      --clr-amber: #f59e0b;
+      --clr-amber-dim: rgba(245,158,11,0.12);
+
+      --clr-text: #f1f3f5;
+      --clr-text-muted: #b3b7c5;
+      --clr-text-faint: #7b8194;
+
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+
+      --sidebar-w: 240px;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    a { color: var(--clr-accent-light); text-decoration: none; }
+
+    .app-shell { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--clr-surface);
+      border-right: 1px solid var(--clr-border);
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--clr-border);
+      font-family: var(--font-head);
+      font-weight: 700;
+      color: var(--clr-text);
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--clr-accent), var(--clr-secondary));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-section-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--clr-text-faint);
+      padding: 12px 20px 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: var(--clr-text-muted);
+    }
+
+    .nav-link:hover {
+      background: var(--clr-surface-2);
+      color: var(--clr-text);
+    }
+
+    .nav-link.active {
+      background: var(--clr-accent-dim);
+      color: var(--clr-accent-light);
+      border-left: 3px solid var(--clr-accent);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--clr-border);
+    }
+
+    .user-chip {
+      display: flex;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--clr-surface-2);
+      border-radius: var(--radius-sm);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--clr-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    .main-content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 32px;
+    }
+
+    .page-title {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .stat-value { font-size: 1.75rem; font-weight: 700; }
+
+    .stat-value.accent { color: var(--clr-accent-light); }
+    .stat-value.green { color: var(--clr-green); }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      color: var(--clr-text);
+      padding: 10px 14px;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--clr-accent);
+      box-shadow: 0 0 0 3px var(--clr-accent-dim);
+    }
+
+    .btn-primary {
+      background: var(--clr-accent);
+      border: 1px solid var(--clr-accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--clr-accent-light);
+      border-color: var(--clr-accent-light);
+    }
+
+    .btn-secondary {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      color: var(--clr-text-muted);
+    }
+
+    .btn-danger {
+      background: var(--clr-red-dim);
+      color: var(--clr-red);
+    }
+
+    .alert-success {
+      background: var(--clr-green-dim);
+      color: var(--clr-green);
+    }
+
+    .alert-info {
+      background: var(--clr-accent-dim);
+      color: var(--clr-accent-light);
+    }
+
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="{% url 'auth:home' %}" class="sidebar-logo">
+      <span class="logo-icon">💰</span>
+      SpendWise
+    </a>
+
+    <span class="nav-section-label">Overview</span>
+    <a href="{% url 'auth:home' %}" class="nav-link">Auth</a>
+
+    <span class="nav-section-label">Expenses</span>
+    <a href="{% url 'expenses:list' %}" class="nav-link">All Expenses</a>
+    <a href="{% url 'expenses:create' %}" class="nav-link">Add Expense</a>
+
+    <span class="nav-section-label">Account</span>
+    <a href="{% url 'core:profile' %}" class="nav-link">Profile</a>
+    <a href="{% url 'core:logout' %}" class="nav-link">Log Out</a>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ user.username|first|upper }}</div>
+        <div>
+          <div>{{ user.username }}</div>
+          <div style="font-size:0.7rem;color:var(--clr-text-faint)">{{ user.email }}</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+</body>
+</html>
+```
